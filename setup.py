@@ -15,6 +15,9 @@ setup(name='numba_qthsh',
   packages=['numba_qthsh'],
   package_data={'numba_qthsh': ['qthsh.so']},
   include_package_data=True,
+  install_requires=[
+      'numba',
+  ],
   classifiers=[
       'Programming Language :: Python',
       'Programming Language :: C',
