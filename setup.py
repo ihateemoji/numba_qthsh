@@ -1,13 +1,22 @@
 import os
 import subprocess
-from setuptools import setup
+import sys
+from setuptools import setup, Extension
+from setuptools.command.build_ext import build_ext
+
+class BuildExt(build_ext):
+    def run(self):
+        if os.name == 'nt':  # Windows
+            # Run the Windows-specific build command
+            subprocess.check_call(['gcc', '-Wall', 'src/qthsh.c', '-shared', '-fPIC', '-o', 'numba_qthsh/qthsh.dll'])
+        else:
+            # Run the Unix-like build command
+            subprocess.check_call(['make'])
+        super().run()
 
 # Read the contents of README.md
 with open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as f:
     readme = f.read()
-
-# Run the make command to compile the shared library
-subprocess.run(['make'], check=True)
 
 # Setup configuration
 setup(
@@ -17,8 +26,10 @@ setup(
     long_description=readme,
     long_description_content_type='text/markdown',
     url='https://github.com/ihateemoji/numba_qthsh',
+    author='Your Name',
+    author_email='your.email@example.com',
     packages=['numba_qthsh'],
-    package_data={'numba_qthsh': ['qthsh.so']},
+    package_data={'numba_qthsh': ['qthsh.so', 'qthsh.dll']},
     include_package_data=True,
     install_requires=[
         'numba',
@@ -30,4 +41,15 @@ setup(
         'Operating System :: OS Independent',
     ],
     python_requires='>=3.6',
+    cmdclass={
+        'build_ext': BuildExt,
+    },
+    ext_modules=[
+        Extension(
+            'numba_qthsh.qthsh',
+            sources=['src/qthsh.c'],
+            extra_compile_args=['-Wall', '-O3', '-march=native', '-shared', '-fPIC'],
+            extra_link_args=['-lm'],
+        ),
+    ],
 )
