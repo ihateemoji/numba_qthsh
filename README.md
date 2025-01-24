@@ -36,6 +36,37 @@ f1_ptr = f1.address
 print(qthsh(f1_ptr, 0, 1))
 ```
 
+### Optional Inputs
+
+The `qthsh` function has several optional inputs that allow for more control over the integration process. The function's signature is as follows:
+
+```python
+def qthsh(func_ptr, lower_bound, upper_bound, level=6, precision=1e-09, data=None):
+    """
+    Tanh-Sinh approximation of the integral of an analytical function.
+    Adapted from https://www.genivia.com/qthsh.html.
+
+    Inputs:
+        <*func<double, *double>> - pointer to a function to be integrated,
+                                    the function must accept two inputs:
+                                    - first one corresponding to the variable
+                                      of integration
+                                    - second one corresponding to the pointer
+                                      to the array of any other input data required
+        <float>                  - lower bound of integration
+        <float>                  - upper bound of integration
+        <int>                    - level, an integer (default is 6 -- recommended)
+        <float>                  - desired precision (default is 1e-09 -- recommended)
+        <array<float>>           - array of any other input data passed through
+                                    to the integrated function
+    Outputs:
+        <float>                  - result of the numerical integration
+        <float>                  - an estimate of the relative error in the
+                                    approximation of the integral
+    """
+```
+
+
 ## Examples
 
 ### Example 1: Basic Integration
