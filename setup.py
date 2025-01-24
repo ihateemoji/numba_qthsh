@@ -4,15 +4,13 @@ import sys
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 
-class BuildExt(build_ext):
-    def run(self):
-        if os.name == 'nt':  # Windows
-            # Run the Windows-specific build command
-            subprocess.check_call(['gcc', '-Wall', 'src/qthsh.c', '-shared', '-fPIC', '-o', 'numba_qthsh/qthsh.dll'])
-        else:
-            # Run the Unix-like build command
-            subprocess.check_call(['make'])
-        super().run()
+if os.name == 'nt':  # Windows
+    # Run the Windows-specific build command
+    subprocess.check_call(['gcc', '-Wall', 'src/qthsh.c', '-shared', '-fPIC', '-o', 'numba_qthsh/qthsh.dll'])
+else:
+    # Run the Unix-like build command
+    subprocess.check_call(['make'])
+super().run()
 
 # Read the contents of README.md
 with open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as f:
@@ -39,15 +37,4 @@ setup(
         'Operating System :: OS Independent',
     ],
     python_requires='>=3.6',
-    cmdclass={
-        'build_ext': BuildExt,
-    },
-    ext_modules=[
-        Extension(
-            'numba_qthsh.qthsh',
-            sources=['src/qthsh.c'],
-            extra_compile_args=['-Wall', '-O3', '-march=native', '-shared', '-fPIC'],
-            extra_link_args=['-lm'],
-        ),
-    ],
 )
