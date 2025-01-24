@@ -26,8 +26,6 @@ setup(
     long_description=readme,
     long_description_content_type='text/markdown',
     url='https://github.com/ihateemoji/numba_qthsh',
-    author='Your Name',
-    author_email='your.email@example.com',
     packages=['numba_qthsh'],
     package_data={'numba_qthsh': ['qthsh.so', 'qthsh.dll']},
     include_package_data=True,
