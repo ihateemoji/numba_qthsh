@@ -10,7 +10,6 @@ if os.name == 'nt':  # Windows
 else:
     # Run the Unix-like build command
     subprocess.check_call(['make'])
-super().run()
 
 # Read the contents of README.md
 with open(os.path.join(os.path.dirname(__file__), 'README.md'), encoding='utf-8') as f:
