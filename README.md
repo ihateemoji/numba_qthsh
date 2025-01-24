@@ -98,6 +98,3 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## Credits
 
 This project uses the C implementation of the tanh-sinh quadrature adapted from [Robert-van-Engelen/Tanh-Sinh](https://github.com/Robert-van-Engelen/Tanh-Sinh), which is published under the MIT license.
-```
-
-Feel free to copy this markdown code into your README.md file. If you need any further modifications, let me know!
