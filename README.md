@@ -20,6 +20,8 @@ Installation instructions for Windows are not provided. Users are encouraged to 
 
 ## Usage
 
+The tanh-sinh quadrature is particularly effective for handling integrals with singularities. This can be done by ensuring that the singularity is placed on the edge of the domain of integration.
+
 Here is a snippet of Python code that performs the integral of (1-x)^{-0.8} between 0 and 1 (note the integrable singularity at x = 0):
 
 ```python
