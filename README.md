@@ -20,7 +20,7 @@ Installation instructions for Windows are not provided. Users are encouraged to 
 
 ## Usage
 
-Here is a snippet of Python code that performs the integral of \( (1-x)^{-0.8} \) between 0 and 1 (note the integrable singularity at \( x = 0 \)):
+Here is a snippet of Python code that performs the integral of (1-x)^{-0.8} between 0 and 1 (note the integrable singularity at x = 0):
 
 ```python
 import numba as nb
@@ -51,21 +51,7 @@ result = qthsh(basic_integral_ptr, 0, 1)
 print("Integral of x^2 from 0 to 1:", result)
 ```
 
-### Example 2: Handling Singularities
-
-```python
-import numba as nb
-from numba_qthsh import qthsh, qthsh_sig
-
-@nb.cfunc(qthsh_sig)
-def singular_integral(x, args_):
-    return (1-x)**(-0.5)
-
-singular_integral_ptr = singular_integral.address
-result = qthsh(singular_integral_ptr, 0, 1)
-print("Integral of (1-x)^(-0.5) from 0 to 1:", result)
-```
-### Example 3: Double Integral with Data Passing
+### Example 2: Double Integral with Data Passing
 
 This advanced example demonstrates how to perform a double integral, where the data from the outer integral function is passed into the inner integral function.
 
