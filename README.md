@@ -1,6 +1,3 @@
-Certainly! Here is the complete markdown code for your updated README file:
-
-```markdown
 # numba_qthsh
 
 `numba_qthsh` is a Python package that integrates the C implementation of the tanh-sinh quadrature with Numba.
