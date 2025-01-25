@@ -65,7 +65,7 @@ double qthsh(double (*f)(double, double*), double a, double b, int n,
         out = sign*qthsh_main(f, a, b, n, eps, data, err);
     }
     /* if both bounds are infinite we split and do and do x=1/y-1 transform */
-    if (!isfinite(a) && !isfinite(b)) {
+    else if (!isfinite(a) && !isfinite(b)) {
         double integ1 = 0.0;
         double integ2 = 0.0;
         double err1 = 0.0;
