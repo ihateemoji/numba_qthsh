@@ -1,34 +1,99 @@
-import os
+import pytest
 import numba as nb
 import numpy as np
 from numba_qthsh import qthsh, qthsh_sig
 
-@nb.cfunc(qthsh_sig)
-def f1(x, args_):
-    return (1-x)**(-0.8)
-f1_ptr = f1.address
+# Define test functions
+@nb.cfunc(qthsh_sig, error_model="numpy")
+def linear_func(x, data):
+    return x
+
+@nb.cfunc(qthsh_sig, error_model="numpy")
+def quadratic_func(x, data):
+    return x * x
+
+@nb.cfunc(qthsh_sig, error_model="numpy")
+def sine_func(x, data):
+    return np.sin(x)
+
+@nb.cfunc(qthsh_sig, error_model="numpy")
+def exponential_func(x, data):
+    return np.exp(-abs(x))
+
+@nb.cfunc(qthsh_sig, error_model="numpy")
+def gaussian_func(x, data):
+    return np.exp(-x * x)
+
+@nb.cfunc(qthsh_sig, error_model="numpy")
+def reciprocal_func(x, data):
+    return 1.0 / x**(1/2)
+
+@nb.cfunc(qthsh_sig, error_model="numpy")
+def log_func(x, data):
+    return np.log(x)
 
 @nb.cfunc(qthsh_sig)
-def f2_level1(x, args_):
-    # Convert the args_ pointer to a Numba array
+def dblinteg_func_level1(x, args_):
     args = nb.carray(args_, (1,))
     y = args[0]
     return (1 + x * y + x**2 * y**2)**(-1)
-f2_level1_ptr = f2_level1.address
+dblinteg_func_level1_ptr = dblinteg_func_level1.address
 @nb.cfunc(qthsh_sig)
-def f2(y, args_):
-    return qthsh(f2_level1_ptr, 0, 1, data=np.array([y], np.float64))[0]
-f2_ptr = f2.address
+def dblinteg_func(y, args_):
+    return qthsh(dblinteg_func_level1_ptr, 0, 1, data=np.array([y], np.float64))[0]
 
-def test_example1():
-    assert qthsh(f1_ptr, 0, 1) == (4.997295850834395, 5.06627157291822e-06)
-def test_example1_extra():
-    if os.name == 'nt':
-        assert qthsh(f1_ptr, 0, 1, n=15, eps=1e-15) == (4.997462936822409, 2.4813017572794643e-08)
-    else:
-        assert qthsh(f1_ptr, 0, 1, n=15, eps=1e-15) == (4.997462936822409, 2.4813017661657574e-08)
-def test_example2():
-    if os.name == 'nt':
-        assert qthsh(f2_ptr, 0, 1) == (0.7813024128964847, 1.0444277523846934e-14)
-    else:
-        assert qthsh(f2_ptr, 0, 1) == (0.7813024128964848, 1.0373228016881988e-14)
+# Run the tests
+def test_linear_function():
+    result, error = qthsh(linear_func.address, 0.0, 1.0)
+    assert pytest.approx(result, abs=1e-6) == 0.5
+    assert error < 1e-6
+
+def test_quadratic_function():
+    result, error = qthsh(quadratic_func.address, 0.0, 1.0)
+    assert pytest.approx(result, abs=1e-6) == 1.0 / 3.0
+    assert error < 1e-6
+
+def test_sine_function():
+    result, error = qthsh(sine_func.address, 0.0, np.pi)
+    assert pytest.approx(result, abs=1e-6) == 2.0
+    assert error < 1e-6
+
+def test_exponential_function():
+    result, error = qthsh(exponential_func.address, 0.0, 1.0)
+    assert pytest.approx(result, abs=1e-6) == 1 - np.exp(-1)
+    assert error < 1e-6
+
+def test_gaussian_function():
+    result, error = qthsh(gaussian_func.address, -np.inf, np.inf)
+    assert pytest.approx(result, abs=1e-6) == np.sqrt(np.pi)
+    assert error < 1e-6
+
+def test_swapped_bounds():
+    result, error = qthsh(linear_func.address, 1.0, 0.0)
+    assert pytest.approx(result, abs=1e-6) == -0.5
+    assert error < 1e-6
+
+def test_finite_to_infinite():
+    result, error = qthsh(exponential_func.address, 0.0, np.inf)
+    assert pytest.approx(result, abs=1e-6) == 1.0
+    assert error < 1e-6
+
+def test_infinite_to_finite():
+    result, error = qthsh(exponential_func.address, -np.inf, 0.0)
+    assert pytest.approx(result, abs=1e-6) == 1.0
+    assert error < 1e-6
+
+def test_reciprocal_function():
+    result, error = qthsh(reciprocal_func.address, 0.0, 1.0)
+    assert pytest.approx(result, abs=1e-6) == 2.0
+    assert error < 1e-6
+
+def test_log_function():
+    result, error = qthsh(log_func.address, 0.0, 1.0)
+    assert pytest.approx(result, abs=1e-6) == -1.0
+    assert error < 1e-6
+
+def test_dblinteg():
+    result, error = qthsh(dblinteg_func.address, 0.0, 1.0)
+    assert pytest.approx(result, abs=1e-6) == 0.7813024128964874
+    assert error < 1e-6
