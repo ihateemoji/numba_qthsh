@@ -6,7 +6,7 @@ from setuptools.command.build_ext import build_ext
 
 if os.name == 'nt':  # Windows
     # Run the Windows-specific build command
-    subprocess.check_call(['gcc', '-Wall', 'src/qthsh.c', '-shared', '-fPIC', '-o', 'numba_qthsh/qthsh.dll'])
+    subprocess.check_call(['gcc', '-Wall', 'src/qthsh.c', '-shared', '-o', 'numba_qthsh/qthsh.dll'])
 else:
     # Run the Unix-like build command
     subprocess.check_call(['make'])
