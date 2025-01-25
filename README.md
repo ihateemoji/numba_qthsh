@@ -1,5 +1,7 @@
 # numba_qthsh
 
+[![Python package](https://github.com/ihateemoji/numba_qthsh/actions/workflows/python-package.yml/badge.svg)](https://github.com/ihateemoji/numba_qthsh/actions/workflows/python-package.yml)
+
 `numba_qthsh` is a Python package that integrates the C implementation of the tanh-sinh quadrature with Numba.
 
 ## Installation
