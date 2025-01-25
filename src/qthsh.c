@@ -86,7 +86,7 @@ double qthsh(double (*f)(double, double*), double a, double b, int n,
         *err = sqrt(err1*err1 + err2*err2);
         out = sign*(integ1 + integ2);
     } 
-    /* if top bound is infinite we do x=1/y-1 transform */
+    /* if top bound is infinite we do x=1/y-1+a transform */
     else if (!isfinite(b)) {
         double g1(double y, double* data) {
             double x = 1.0/y - 1.0 + a;
@@ -95,7 +95,7 @@ double qthsh(double (*f)(double, double*), double a, double b, int n,
         }
         out = sign*qthsh_main(&g1, 0.0, 1.0, n, eps, data, err);
     } 
-    /* if bottom bound is infinite we do x=1/y-1 transform and reflect,
+    /* if bottom bound is infinite we do x=1/y-1-b transform and reflect,
         this is an only possible case left */
     else if (!isfinite(a)) {
         double g1(double y, double* data) {
