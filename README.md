@@ -124,6 +124,30 @@ result = qthsh(f2_ptr, 0, 1)
 print("Result of the double integral:", result)
 ```
 
+### Example 3: Integration with Infinite Bounds
+
+This example demonstrates how to perform numerical integration with infinite bounds.
+
+```python
+import numba as nb
+import numpy as np
+from numba_qthsh import qthsh, qthsh_sig
+
+# Define the Gaussian function
+@nb.cfunc(qthsh_sig)
+def gaussian_func(x, data):
+    return np.exp(-x * x)
+
+# Get the function pointer for the Gaussian function
+gaussian_func_ptr = gaussian_func.address
+
+# Perform the integral from -infinity to infinity
+result, error = qthsh(gaussian_func_ptr, -np.inf, np.inf)
+
+# Print the result of the integral
+print("Integral of exp(-x^2) from -infinity to infinity:", result)
+print("Estimated error:", error)
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
