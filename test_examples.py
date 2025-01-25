@@ -23,10 +23,12 @@ f2_ptr = f2.address
 def test_example1():
     assert qthsh(f1_ptr, 0, 1) == (4.997295850834395, 5.06627157291822e-06)
 def test_example1_extra():
-    if os.name == "nt":
+    if os.name == 'nt':
         assert qthsh(f1_ptr, 0, 1, n=15, eps=1e-15) == (4.997462936822409, 2.4813017572794643e-08)
-    assert qthsh(f1_ptr, 0, 1, n=15, eps=1e-15) == (4.997462936822409, 2.4813017661657574e-08)
+    else:
+        assert qthsh(f1_ptr, 0, 1, n=15, eps=1e-15) == (4.997462936822409, 2.4813017661657574e-08)
 def test_example2():
-    if os.name == "nt":
+    if os.name == 'nt':
         assert qthsh(f2_ptr, 0, 1) == (0.7813024128964847, 1.0444277523846934e-14)
-    assert qthsh(f2_ptr, 0, 1) == (0.7813024128964848, 1.0373228016881988e-14)
+    else:
+        assert qthsh(f2_ptr, 0, 1) == (0.7813024128964848, 1.0373228016881988e-14)
