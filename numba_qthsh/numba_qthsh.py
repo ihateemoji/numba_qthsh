@@ -10,7 +10,7 @@ qthsh_sig = nb.types.double(nb.types.double, \
 # load the shared object and define its signature and the output type
 rootdir = os.path.dirname(os.path.realpath(__file__))+'/'
 if os.name == 'nt':
-    libqthsh = ct.CDLL(rootdir+'qthsh.dll')
+    libqthsh = ct.CDLL(rootdir+'qthsh.dll', winmode=0)
 else:
     libqthsh = ct.CDLL(rootdir+'qthsh.so')
 qthsh_ = libqthsh.qthsh
