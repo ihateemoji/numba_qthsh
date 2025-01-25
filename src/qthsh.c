@@ -89,7 +89,7 @@ double qthsh(double (*f)(double, double*), double a, double b, int n,
     /* if top bound is infinite we do x=1/y-1 transform */
     else if (!isfinite(b)) {
         double g1(double y, double* data) {
-            double x = 1.0/y - 1.0;
+            double x = 1.0/y - 1.0 + a;
             double dx = 1.0/(y*y);
             return (*f)(x, data)*dx;
         }
@@ -99,7 +99,7 @@ double qthsh(double (*f)(double, double*), double a, double b, int n,
         this is an only possible case left */
     else if (!isfinite(a)) {
         double g1(double y, double* data) {
-            double x = 1.0/y - 1.0;
+            double x = 1.0/y - 1.0 - b;
             double dx = 1.0/(y*y);
             return (*f)(-1.0*x, data)*dx;
         }
