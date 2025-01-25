@@ -18,7 +18,7 @@ pip install .
 
 ### Windows
 
-Installation instructions for Windows are not provided. Users are encouraged to figure it out on their own.
+Installation instructions for Windows are not provided. Users are encouraged to figure it out on their own. If you manage to install it on Windows, please consider opening a pull request with the installation instructions as I do not have a Windows machine available.
 
 ## Usage
 
