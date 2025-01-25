@@ -147,6 +147,7 @@ result, error = qthsh(gaussian_func_ptr, -np.inf, np.inf)
 # Print the result of the integral
 print("Integral of exp(-x^2) from -infinity to infinity:", result)
 print("Estimated error:", error)
+```
 
 ## License
 
