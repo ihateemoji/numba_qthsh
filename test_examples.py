@@ -88,9 +88,14 @@ def test_infinite_to_finite():
     assert pytest.approx(result, abs=1e-6) == 1.0
     assert error < 1e-6
 
-def test_infinite_to_finite():
+def test_infinite_to_finite1():
     result, error = qthsh(exponential_func.address, -np.inf, -4)
     assert pytest.approx(result, abs=1e-6) == 0.01831563888873418
+    assert error < 1e-6
+
+def test_infinite_to_finite2():
+    result, error = qthsh(gaussian_func.address, -np.inf, 4)
+    assert pytest.approx(result, abs=1e-6) == 1.772453837242327
     assert error < 1e-6
 
 def test_reciprocal_function():
