@@ -64,27 +64,14 @@ double qthsh(double (*f)(double, double*), double a, double b, int n,
     if (isfinite(a) && isfinite(b)) {
         out = sign*qthsh_main(f, a, b, n, eps, data, err);
     }
-    /* if both bounds are infinite we split and do and do x=1/y-1 transform */
+    /* if both bounds are infinite we do x=(1-y)/y - y/(1-y) transform */
     else if (!isfinite(a) && !isfinite(b)) {
-        double integ1 = 0.0;
-        double integ2 = 0.0;
-        double err1 = 0.0;
-        double err2 = 0.0;
         double g1(double y, double* data) {
-            double x = 1.0/y - 1.0;
-            double dx = 1.0/(y*y);
+            double x = (1.0-y)/y - y/(1.0-y);
+            double dx = 1.0/((y-1.0)*(y-1.0)) + 1.0/(y*y);
             return (*f)(x, data)*dx;
         }
-        double g2(double y, double* data) {
-            double x = 1.0/y - 1.0;
-            double dx = 1.0/(y*y);
-            return (*f)(-1.0*x, data)*dx;
-        }
-        /* do backwards and forewords integrals and propagate the error */
-        integ1 = qthsh_main(&g1, 0.0, 1.0, n, eps, data, &err1);
-        integ2 = qthsh_main(&g2, 0.0, 1.0, n, eps, data, &err2);
-        *err = sqrt(err1*err1 + err2*err2);
-        out = sign*(integ1 + integ2);
+        out = sign*qthsh_main(&g1, 0.0, 1.0, n, eps, data, err);
     } 
     /* if top bound is infinite we do x=1/y-1+a transform */
     else if (!isfinite(b)) {
