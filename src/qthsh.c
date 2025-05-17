@@ -5,6 +5,13 @@
 #define FUDGE1 10
 #define FUDGE2 1
 
+// struct used to pass data for the change of integration variable
+typedef struct {
+    double (*f)(double, double*);
+    double a, b;
+    double* orig_data;
+} qthsh_ctx;
+
 // integrate function f, range a..b, max levels n (6 is recommended), 
 // relative error tolerance eps, estimated relative error err
 double qthsh_main(double (*f)(double, double*), double a, double b, int n, 
@@ -52,6 +59,26 @@ double qthsh_main(double (*f)(double, double*), double a, double b, int n,
   return d*s*h;
 }
 
+// integrand function with changed variable for improper integrals
+double g1_infinite(double y, double* data) {
+    qthsh_ctx* ctx = (qthsh_ctx*)data;
+    double x = (1.0 - y) / y - y / (1.0 - y);
+    double dx = 1.0 / ((y - 1.0) * (y - 1.0)) + 1.0 / (y * y);
+    return ctx->f(x, ctx->orig_data) * dx;
+}
+double g1_upper(double y, double* data) {
+    qthsh_ctx* ctx = (qthsh_ctx*)data;
+    double x = 1.0 / y - 1.0 + ctx->a;
+    double dx = 1.0 / (y * y);
+    return ctx->f(x, ctx->orig_data) * dx;
+}
+double g1_lower(double y, double* data) {
+    qthsh_ctx* ctx = (qthsh_ctx*)data;
+    double x = 1.0 / y - 1.0 - ctx->b;
+    double dx = 1.0 / (y * y);
+    return ctx->f(-1.0 * x, ctx->orig_data) * dx;
+}
+
 double qthsh(double (*f)(double, double*), double a, double b, int n, 
                                 double eps, double* data, double* err) {
     /* Wrapper of the qthsh quadrature */ 
@@ -66,31 +93,22 @@ double qthsh(double (*f)(double, double*), double a, double b, int n,
     }
     /* if both bounds are infinite we do x=(1-y)/y - y/(1-y) transform */
     else if (!isfinite(a) && !isfinite(b)) {
-        double g1(double y, double* data) {
-            double x = (1.0-y)/y - y/(1.0-y);
-            double dx = 1.0/((y-1.0)*(y-1.0)) + 1.0/(y*y);
-            return (*f)(x, data)*dx;
-        }
-        out = sign*qthsh_main(&g1, 0.0, 1.0, n, eps, data, err);
+        qthsh_ctx ctx = {f, a, b, data};
+        out = sign * 
+                qthsh_main(g1_infinite, 0.0, 1.0, n, eps, (double*)&ctx, err);
     } 
     /* if top bound is infinite we do x=1/y-1+a transform */
     else if (!isfinite(b)) {
-        double g1(double y, double* data) {
-            double x = 1.0/y - 1.0 + a;
-            double dx = 1.0/(y*y);
-            return (*f)(x, data)*dx;
-        }
-        out = sign*qthsh_main(&g1, 0.0, 1.0, n, eps, data, err);
+        qthsh_ctx ctx = {f, a, b, data};
+        out = sign * 
+                qthsh_main(g1_upper, 0.0, 1.0, n, eps, (double*)&ctx, err);
     } 
     /* if bottom bound is infinite we do x=1/y-1-b transform and reflect,
         this is an only possible case left */
     else if (!isfinite(a)) {
-        double g1(double y, double* data) {
-            double x = 1.0/y - 1.0 - b;
-            double dx = 1.0/(y*y);
-            return (*f)(-1.0*x, data)*dx;
-        }
-        out = sign*qthsh_main(&g1, 0.0, 1.0, n, eps, data, err);
+        qthsh_ctx ctx = {f, a, b, data};
+        out = sign * 
+                qthsh_main(g1_lower, 0.0, 1.0, n, eps, (double*)&ctx, err);
     }
     return out;
 }
